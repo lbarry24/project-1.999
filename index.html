@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Penn State Steps - HAX Component</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: bold;
+      color: #001e44;
+      margin-bottom: 1em;
+    }
+
+    .steps-list {
+      padding-left: 1em;
+      position: relative;
+    }
+
+    .steps-list-item {
+      display: block;
+      margin-bottom: 2em;
+      position: relative;
+      padding-left: 3em;
+    }
+
+    .steps-circle {
+      position: absolute;
+      left: -1.6em;
+      top: 0.2em;
+      width: 2.5em;
+      height: 2.5em;
+      background-color: #001e44;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2em;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .steps-list-item::before {
+      content: '';
+      position: absolute;
+      left: -0.35em;
+      top: 2.7em;
+      width: 0;
+      height: calc(100% - 2.7em);
+      border-left: 2px dotted #ccc;
+      z-index: 1;
+    }
+
+    .steps-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #001e44;
+      margin: 0 0 0.5em;
+    }
+
+    .steps-content {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .steps-content ul {
+      padding-left: 1.2em;
+    }
+
+    .steps-content li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Start Planning Your Penn State Experience</h2>
+  <p>Take the next steps toward a future at Penn State Altoona. Find admission requirements, tuition and financial aid, and other information to get you ready to apply.</p>
+
+  <ddd-steps-list>
+    <ddd-steps-list-item title="Choose your enrollment period">
+      <p>You will need to complete the FAFSA each year for financial aid consideration:</p>
+      <ul>
+        <li>Summer 2024</li>
+        <li>Fall 2024/Spring 2025</li>
+      </ul>
+    </ddd-steps-list-item>
+
+    <ddd-steps-list-item title="Get help">
+      <p>Utilize these resources for assistance with Federal Aid:</p>
+      <ul>
+        <li>Call the Federal Student Aid Information Center at 1-800-433-3243</li>
+        <li>Visit the Federal Student Aid (FSA) site at <a href="https://studentaid.gov/apply-for-aid/fafsa" target="_blank">FAFSA: Applying for Aid</a></li>
+        <li>Follow Federal Student Aid on YouTube</li>
+      </ul>
+    </ddd-steps-list-item>
+
+    <ddd-steps-list-item title="Ensure Receipt of Email">
+      <p>Allow messages from these email addresses:</p>
+      <ul>
+        <li>osa-noreply@psu.edu</li>
+        <li>OSAAward@psu.edu</li>
+        <li>FederalStudentAidFAFSA@cpsemail.ed.gov</li>
+        <li>FederalStudentAidPIN@cpsemail.ed.gov</li>
+      </ul>
+    </ddd-steps-list-item>
+
+    <ddd-steps-list-item title="Review Your Student Aid Report">
+      <p>After submitting the FAFSA, you'll receive a Student Aid Report (SAR):</p>
+      <ul>
+        <li>Verify all information is correct and make necessary corrections through the FAFSA website.</li>
+        <li>For questions, contact the Federal Student Aid Information Center at 1-800-433-3243 and provide your DRN number from the SAR.</li>
+        <li>Print the revised copy for your records.</li>
+      </ul>
+      <img src="https://studiengaenge.zeit.de/uploads/cms/66eaef7403c4e_konzentration.png?1743087710=&width=800&format=auto" 
+           alt="Review your SAR image" 
+           style="max-width: 50%; height: auto; display: block; margin-top: 1em;">
+      <p>The Office of Student Aid will also review your SAR and contact you if additional information is needed.</p>
+    </ddd-steps-list-item>
+  </ddd-steps-list>
+
+  <script type="module">
+    class DddStepsList extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.classList.add('steps-list');
+        const items = Array.from(this.children).filter(child =>
+          child.tagName === 'DDD-STEPS-LIST-ITEM'
+        );
+        items.forEach((item, index) => {
+          item.setAttribute('step', index + 1);
+          if (typeof item.render === 'function') {
+            item.render();
+          }
+        });
+      }
+
+      static get haxProperties() {
+        return {
+          canScale: true,
+          canPosition: true,
+          canEditSource: true,
+          gizmo: {
+            title: "Steps List",
+            description: "A vertical list with steps",
+            icon: "icons:check-circle",
+            color: "blue",
+            groups: ["Content"],
+            handles: [],
+            meta: {
+              author: "Your Name"
+            }
+          },
+          settings: {
+            configure: [],
+            advanced: []
+          }
+        };
+      }
+    }
+
+    class DddStepsListItem extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+      }
+
+      static get observedAttributes() {
+        return ['step', 'title'];
+      }
+
+      attributeChangedCallback(name, oldVal, newVal) {
+        this[name] = newVal;
+        this.render();
+      }
+
+      connectedCallback() {
+        this.render();
+      }
+
+      render() {
+        this.shadowRoot.innerHTML = `
+          <style>
+            .steps-list-item {
+              display: block;
+              margin-bottom: 2em;
+              position: relative;
+              padding-left: 3em;
+            }
+
+            .steps-circle {
+              position: absolute;
+              left: -1.6em;
+              top: 0.2em;
+              width: 2.5em;
+              height: 2.5em;
+              background-color: #001e44;
+              color: white;
+              font-weight: bold;
+              font-size: 1.2em;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              z-index: 2;
+            }
+
+            .steps-title {
+              font-size: 28px;
+              font-weight: bold;
+              color: #001e44;
+              margin: 0 0 0.5em;
+            }
+
+            .steps-content {
+              font-size: 16px;
+              color: #333;
+            }
+
+            .steps-content ul {
+              padding-left: 1.2em;
+            }
+
+            .steps-content li {
+              margin-bottom: 0.5em;
+            }
+          </style>
+          <div class="steps-list-item">
+            <div class="steps-circle">${this.step}</div>
+            <h3 class="steps-title">${this.title || ''}</h3>
+            <div class="steps-content">
+              <slot></slot>
+            </div>
+          </div>
+        `;
+      }
+
+      static get haxProperties() {
+        return {
+          canScale: true,
+          canPosition: true,
+          canEditSource: true,
+          gizmo: {
+            title: "Step List Item",
+            description: "An individual step in a steps list",
+            icon: "icons:assignment",
+            color: "blue",
+            groups: ["Content"],
+            meta: {
+              author: "Your Name"
+            }
+          },
+          settings: {
+            configure: [
+              {
+                property: "title",
+                title: "Step Title",
+                inputMethod: "textfield"
+              }
+            ],
+            advanced: []
+          }
+        };
+      }
+    }
+
+    customElements.define('ddd-steps-list', DddStepsList);
+    customElements.define('ddd-steps-list-item', DddStepsListItem);
+  </script>
+</body>
+</html>
